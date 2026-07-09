@@ -11,7 +11,7 @@ def query_model(
     response = ollama.generate(
         model=model,
         prompt=prompt,
-        options={"temperature": temperature},  # Note: lowercase "temperature" for Ollama API
+        options={"temperature": temperature},  #  lowercase "temperature" for Ollama API
     )
     # above was sending a request to Ollama
     return response["response"]
