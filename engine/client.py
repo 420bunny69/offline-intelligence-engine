@@ -1,4 +1,6 @@
 import ollama
+import time
+CPU_ONLY_MODE={"mistral:7b"}
 
 def query_model(
     prompt: str,
@@ -7,11 +9,14 @@ def query_model(
     temperature: float = 0.0
 ) -> str:
     """Send a prompt to a local Ollama model and return the raw text response"""
+    options={"temperature": temperature} #  lowercase "temperature" for Ollama API
+    if model in CPU_ONLY_MODE:
+            options["num_gpu"]=0
     
     response = ollama.generate(
         model=model,
         prompt=prompt,
-        options={"temperature": temperature},  # Note: lowercase "temperature" for Ollama API
-    )
+        options=options,
+        )
     # above was sending a request to Ollama
     return response["response"]
