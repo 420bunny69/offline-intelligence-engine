@@ -1,4 +1,3 @@
-# cli/chat.py
 import sys
 import os
 
