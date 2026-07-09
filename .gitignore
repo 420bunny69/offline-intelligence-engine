@@ -1,0 +1,16 @@
+# Virtual environment
+venv/
+
+# Python cache
+__pycache__/
+*.pyc
+
+# Ollama models
+models/
+
+# Environment variables
+.env
+
+# IDE files
+.vscode/
+.idea/
