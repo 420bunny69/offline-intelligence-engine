@@ -26,7 +26,7 @@ def query_model_with_timing(prompt:str,model:str="llama3.2:3b",temperature: floa
     Stream the response, capture TTFT and total latency, and token count
     """
     options = {"temperature": temperature}
-    if model in CPU_ONLY_MODELS:
+    if model in CPU_ONLY_MODE:
         options["num_gpu"] = 0
     
     start=time.perf_counter()

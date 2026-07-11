@@ -14,3 +14,6 @@ models/
 # IDE files
 .vscode/
 .idea/
+
+benchmarks/results.json
+benchmarks/summary.csv
