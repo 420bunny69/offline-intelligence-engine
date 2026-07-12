@@ -4,6 +4,8 @@ sys.path.append(os.path.join(os.path.dirname(__file__),".."))
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 from engine.client import query_model, query_model_with_timing
+from engine.extract import extract as extract_fn
+from engine.registry import SCHEMA_REGISTRY
 app = FastAPI(title="Offline Intelligence System", version="0.1.0")
 
 VALID_MODELS = {"llama3.2:3b", "mistral:7b", "phi4-mini"}
@@ -56,3 +58,27 @@ def chat_timed(request: ChatRequest):
         tokens_per_sec=result["tokens_per_sec"],
         total_latency_sec=result["total_latency_sec"],
     )
+class ExtractRequest(BaseModel):
+    text: str
+    model: str = "llama3.2:3b"
+    temperature: float = 0.0
+
+
+@app.post("/extract/{schema_name}")
+def extract_endpoint(schema_name: str, request: ExtractRequest):
+    if schema_name not in SCHEMA_REGISTRY:
+        raise HTTPException(status_code=404, detail=f"Unknown schema. Available: {list(SCHEMA_REGISTRY.keys())}")
+    if request.model not in VALID_MODELS:
+        raise HTTPException(status_code=400, detail=f"Unknown model. Choose from {VALID_MODELS}")
+
+    result = extract_fn(request.text, schema_name, model=request.model, temperature=request.temperature)
+
+    if not result["success"]:
+        raise HTTPException(status_code=422, detail=f"Extraction failed after {result['attempts']} attempts: {result['error']}")
+
+    return {
+        "schema": schema_name,
+        "model": request.model,
+        "attempts": result["attempts"],
+        "data": result["data"],
+    }
