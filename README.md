@@ -1,14 +1,14 @@
 # Offline AI Assistant: A Local LLM-Powered Structured Information Extraction System
 
-A fully offline, schema-agnostic extraction engine. It turns messy, unstructured text into validated structured JSON using local LLMs (via Ollama) — no cloud API, no data leaving the machine.
+A fully offline, schema-agnostic extraction engine. It turns messy, unstructured text into validated structured JSON using local LLMs (via Ollama), no cloud API, no data leaving the machine.
 
-Meeting-note action-item extraction is the **first supported schema**, not the identity of the project. The engine itself has no knowledge of "meetings" — it takes a Pydantic schema and a document, and returns validated structured output for *any* document type registered with it.
+Meeting-note action-item extraction is the **first supported schema**, not the identity of the project. The engine itself has no knowledge of "meetings", it takes a Pydantic schema and a document, and returns validated structured output for *any* document type registered with it.
 
 ![Architecture](docs/architecture.svg)
 
 ## Why this exists
 
-Most "LLM extraction" demos are hardcoded: one prompt, one output shape, one use case. That doesn't reflect how extraction is actually used in production — a real system needs to support new document types without rewriting its core. This project is built around that constraint: the engine, API, and CLI are all schema-agnostic, and adding a new document type is a matter of writing one schema file, not touching the engine.
+Most "LLM extraction" demos are hardcoded: they use one prompt, give one output shape, suitable for only one use case. That doesn't reflect how extraction is actually used in production since a real system needs to support new document types without rewriting its core. This project is built around that constraint: the engine, API, and CLI are all schema-agnostic, and adding a new document type is a matter of writing one schema file, not touching the engine.
 
 ## What it does
 
@@ -51,7 +51,6 @@ offline-ai-assistant/
 ├── docs/
 │   └── architecture.svg
 ├── app.py                        # Streamlit demo
-└── requirements.txt
 ```
 
 **The core design decision:** `engine/` never imports anything from `schemas/` directly — it goes through `engine/registry.py`. CLI, API, and evaluation all call the same `engine.extract.extract(text, schema_name)` function. Nothing about the engine changes when a new schema is added.
@@ -141,11 +140,11 @@ That's it. `engine/extract.py`, `api/main.py`, and `cli/chat.py` require zero ch
 
 ## Known limitations
 
-- Field-level accuracy for free-text fields (e.g. `due_date`) is measured with exact string matching, which underestimates true accuracy since models phrase dates differently ("Friday" vs. "by Friday" vs. "end of week") — this is a scoring limitation, not purely a model failure
+- Field-level accuracy for free-text fields (e.g. `due_date`) is measured with exact string matching, which underestimates true accuracy since models phrase dates differently ("Friday" vs. "by Friday" vs. "end of week"), which is a scoring limitation, not purely a model failure
 - Models occasionally infer optional fields (e.g. `priority`) that weren't explicitly stated in the source text, rather than returning `null` as instructed
 - `mistral:7b` is impractically slow on consumer GPUs with <8GB VRAM; recommended only where accuracy strictly outweighs latency
 
 
 ## Tech stack
 
-Python · Ollama · FastAPI · Pydantic · pandas · Streamlit (planned)
+Python · Ollama · FastAPI · Pydantic · pandas · Streamlit 
