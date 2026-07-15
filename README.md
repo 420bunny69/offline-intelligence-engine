@@ -140,10 +140,11 @@ That's it. `engine/extract.py`, `api/main.py`, and `cli/chat.py` require zero ch
 
 ## Known limitations
 
-- Field-level accuracy for free-text fields (e.g. `due_date`) is measured with exact string matching, which underestimates true accuracy since models phrase dates differently ("Friday" vs. "by Friday" vs. "end of week"), which is a scoring limitation, not purely a model failure
+- Field-level accuracy for free-text fields (e.g. `due_date`) is measured with exact string matching, which effects true accuracy since models phrase dates differently ("Friday" vs. "by Friday" vs. "end of week"), which is a scoring limitation, not purely a model failure
 - Models occasionally infer optional fields (e.g. `priority`) that weren't explicitly stated in the source text, rather than returning `null` as instructed
-- `mistral:7b` is impractically slow on consumer GPUs with <8GB VRAM; recommended only where accuracy strictly outweighs latency
-
+- `mistral:7b` is very slow on consumer GPUs with <8GB VRAM; recommended only where accuracy strictly outweighs latency
+- List fields like `experience` and `skills` depend on how the input text is formatted. 
+If the resume text has numbered points or bullets, each item gets extracted separately. If it's written as plain prose, multiple items sometimes get merged into one entry, even though the prompt asks for a separate list.
 
 ## Tech stack
 
